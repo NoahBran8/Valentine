@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>❤️ Valentine?</title>
+
   <style>
     body {
       margin: 0;
@@ -24,7 +25,7 @@
       text-align: center;
       width: min(360px, 92vw);
       position: relative;
-      z-index: 2; /* keep above hearts */
+      z-index: 2;
     }
 
     .cute-img {
@@ -56,7 +57,7 @@
       position: absolute;
       user-select: none;
       -webkit-tap-highlight-color: transparent;
-      transition: left 0.15s ease, top 0.15s ease, transform 0.15s ease; /* smoother movement */
+      transition: left 0.15s ease, top 0.15s ease, transform 0.15s ease;
     }
 
     #yesBtn {
@@ -106,7 +107,9 @@
         opacity: 0.95;
       }
       100% {
-        transform: translateY(-110vh) translateX(var(--drift, 0px)) scale(var(--scale, 1));
+        transform: translateY(-110vh)
+                   translateX(var(--drift, 0px))
+                   scale(var(--scale, 1));
         opacity: 0;
       }
     }
@@ -114,6 +117,7 @@
 </head>
 
 <body>
+
   <div class="hearts" id="hearts"></div>
 
   <div class="card">
@@ -125,7 +129,9 @@
       <button id="noBtn">No 🙈</button>
     </div>
 
-    <div class="msg" id="msg">YAY!!! 🥰 I love you so much Stink!! 😘</div>
+    <div class="msg" id="msg">
+      YAY!!! 🥰 I love you so much Stink!! 😘
+    </div>
   </div>
 
   <script>
@@ -133,50 +139,48 @@
     const yesBtn = document.getElementById("yesBtn");
     const playArea = document.getElementById("playArea");
     const msg = document.getElementById("msg");
-
     const heartsLayer = document.getElementById("hearts");
 
+    /* Smooth anti-jitter movement */
     let moving = false;
 
-function moveNoButton() {
-  if (moving) return;
-  moving = true;
+    function moveNoButton() {
+      if (moving) return;
+      moving = true;
 
-  const areaRect = playArea.getBoundingClientRect();
-  const btnRect = noBtn.getBoundingClientRect();
+      const areaRect = playArea.getBoundingClientRect();
+      const btnRect = noBtn.getBoundingClientRect();
 
-  const maxX = areaRect.width - btnRect.width;
-  const maxY = areaRect.height - btnRect.height;
+      const maxX = areaRect.width - btnRect.width;
+      const maxY = areaRect.height - btnRect.height;
 
-  const x = Math.random() * maxX;
-  const y = Math.random() * maxY;
+      const x = Math.random() * maxX;
+      const y = Math.random() * maxY;
 
-  noBtn.style.left = `${x}px`;
-  noBtn.style.top = `${y}px`;
+      noBtn.style.left = `${x}px`;
+      noBtn.style.top = `${y}px`;
 
-  setTimeout(() => {
-    moving = false;
-  }, 120);
-}
+      setTimeout(() => {
+        moving = false;
+      }, 120);
+    }
 
-// Desktop: runs away instantly when cursor enters button
-noBtn.addEventListener("mouseenter", moveNoButton);
+    // Desktop
+    noBtn.addEventListener("mouseenter", moveNoButton);
 
-    // Desktop: runs away when mouse hovers over it
-    noBtn.addEventListener("mouseover", moveNoButton);
-
-    // Mobile: runs away immediately when finger touches it
+    // Mobile
     noBtn.addEventListener("touchstart", (e) => {
       e.preventDefault();
       moveNoButton();
     }, { passive: false });
 
-    // Extra safety: if click somehow registers
+    // Backup safety
     noBtn.addEventListener("click", (e) => {
       e.preventDefault();
       moveNoButton();
     });
 
+    /* Floating Hearts Logic */
     function spawnHeart() {
       const heart = document.createElement("div");
       heart.className = "heart";
@@ -184,11 +188,10 @@ noBtn.addEventListener("mouseenter", moveNoButton);
       const options = ["💗", "💖", "💘", "💕", "❤️"];
       heart.textContent = options[Math.floor(Math.random() * options.length)];
 
-      // Randomize start position and motion
       const left = Math.random() * 100;
-      const duration = 2.5 + Math.random() * 2.5; // 2.5s–5s
-      const drift = (Math.random() * 160 - 80).toFixed(0) + "px"; // -80px to 80px
-      const scale = (0.8 + Math.random() * 1.2).toFixed(2); // 0.8–2.0
+      const duration = 2.5 + Math.random() * 2.5;
+      const drift = (Math.random() * 160 - 80).toFixed(0) + "px";
+      const scale = (0.8 + Math.random() * 1.2).toFixed(2);
 
       heart.style.left = `${left}vw`;
       heart.style.animationDuration = `${duration}s`;
@@ -197,20 +200,16 @@ noBtn.addEventListener("mouseenter", moveNoButton);
 
       heartsLayer.appendChild(heart);
 
-      // Remove after animation ends
       setTimeout(() => heart.remove(), duration * 1000);
     }
 
     function startHearts() {
-      // Burst
       for (let i = 0; i < 18; i++) {
         setTimeout(spawnHeart, i * 80);
       }
 
-      // Continuous
       const intervalId = setInterval(spawnHeart, 200);
 
-      // Stop after a bit (optional)
       setTimeout(() => clearInterval(intervalId), 8500);
     }
 
@@ -220,5 +219,6 @@ noBtn.addEventListener("mouseenter", moveNoButton);
       startHearts();
     });
   </script>
+
 </body>
 </html>
