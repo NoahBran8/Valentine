@@ -136,29 +136,31 @@
 
     const heartsLayer = document.getElementById("hearts");
 
-    function moveNoButton() {
-      const areaRect = playArea.getBoundingClientRect();
-      const btnRect = noBtn.getBoundingClientRect();
+    let moving = false;
 
-      const maxX = areaRect.width - btnRect.width;
-      const maxY = areaRect.height - btnRect.height;
+function moveNoButton() {
+  if (moving) return;
+  moving = true;
 
-      const x = Math.random() * maxX;
-      const y = Math.random() * maxY;
+  const areaRect = playArea.getBoundingClientRect();
+  const btnRect = noBtn.getBoundingClientRect();
 
-      noBtn.style.left = `${x}px`;
-      noBtn.style.top = `${y}px`;
-    }
+  const maxX = areaRect.width - btnRect.width;
+  const maxY = areaRect.height - btnRect.height;
 
-    // Desktop: runs away when mouse gets close (optional but fun)
-    playArea.addEventListener("mousemove", (e) => {
-      const btnRect = noBtn.getBoundingClientRect();
-      const dx = e.clientX - (btnRect.left + btnRect.width / 2);
-      const dy = e.clientY - (btnRect.top + btnRect.height / 2);
-      const distance = Math.sqrt(dx * dx + dy * dy);
+  const x = Math.random() * maxX;
+  const y = Math.random() * maxY;
 
-      if (distance < 90) moveNoButton();
-    });
+  noBtn.style.left = `${x}px`;
+  noBtn.style.top = `${y}px`;
+
+  setTimeout(() => {
+    moving = false;
+  }, 120);
+}
+
+// Desktop: runs away instantly when cursor enters button
+noBtn.addEventListener("mouseenter", moveNoButton);
 
     // Desktop: runs away when mouse hovers over it
     noBtn.addEventListener("mouseover", moveNoButton);
