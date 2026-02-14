@@ -57,7 +57,7 @@
       position: absolute;
       user-select: none;
       -webkit-tap-highlight-color: transparent;
-      transition: left 0.15s ease, top 0.15s ease, transform 0.15s ease;
+      transition: left 0.08s ease, top 0.08s ease, transform 0.08s ease;
     }
 
     #yesBtn {
@@ -141,7 +141,6 @@
     const msg = document.getElementById("msg");
     const heartsLayer = document.getElementById("hearts");
 
-    /* Smooth anti-jitter movement */
     let moving = false;
 
     function moveNoButton() {
@@ -154,6 +153,7 @@
       const maxX = areaRect.width - btnRect.width;
       const maxY = areaRect.height - btnRect.height;
 
+      // Larger random jump
       const x = Math.random() * maxX;
       const y = Math.random() * maxY;
 
@@ -162,7 +162,7 @@
 
       setTimeout(() => {
         moving = false;
-      }, 120);
+      }, 60); // faster reset
     }
 
     // Desktop
@@ -174,13 +174,12 @@
       moveNoButton();
     }, { passive: false });
 
-    // Backup safety
+    // Backup
     noBtn.addEventListener("click", (e) => {
       e.preventDefault();
       moveNoButton();
     });
 
-    /* Floating Hearts Logic */
     function spawnHeart() {
       const heart = document.createElement("div");
       heart.className = "heart";
@@ -215,7 +214,7 @@
 
     yesBtn.addEventListener("click", () => {
       msg.style.display = "block";
-      yesBtn.style.transform = "scale(1.05)";
+      yesBtn.style.transform = "scale(1.1)";
       startHearts();
     });
   </script>
