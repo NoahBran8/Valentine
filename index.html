@@ -24,6 +24,7 @@
       text-align: center;
       width: min(360px, 92vw);
       position: relative;
+      z-index: 2; /* keep above hearts */
     }
 
     .cute-img {
@@ -34,7 +35,6 @@
       margin: 0 auto 12px;
       display: block;
       box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
-      
     }
 
     h1 {
@@ -54,9 +54,9 @@
       font-size: 16px;
       cursor: pointer;
       position: absolute;
-      transition: transform 0.15s ease;
       user-select: none;
       -webkit-tap-highlight-color: transparent;
+      transition: left 0.15s ease, top 0.15s ease, transform 0.15s ease; /* smoother movement */
     }
 
     #yesBtn {
@@ -78,9 +78,44 @@
       font-size: 18px;
       display: none;
     }
+
+    /* Floating hearts */
+    .hearts {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 1;
+    }
+
+    .heart {
+      position: absolute;
+      bottom: -20px;
+      font-size: 18px;
+      opacity: 0.9;
+      animation: floatUp linear forwards;
+      will-change: transform, opacity;
+    }
+
+    @keyframes floatUp {
+      0% {
+        transform: translateY(0) translateX(0) scale(1);
+        opacity: 0;
+      }
+      10% {
+        opacity: 0.95;
+      }
+      100% {
+        transform: translateY(-110vh) translateX(var(--drift, 0px)) scale(var(--scale, 1));
+        opacity: 0;
+      }
+    }
   </style>
 </head>
+
 <body>
+  <div class="hearts" id="hearts"></div>
+
   <div class="card">
     <img class="cute-img" src="valentine_pic.png" alt="Cute photo" />
     <h1>Rachel, will you be my Valentine?</h1>
@@ -99,6 +134,8 @@
     const playArea = document.getElementById("playArea");
     const msg = document.getElementById("msg");
 
+    const heartsLayer = document.getElementById("hearts");
+
     function moveNoButton() {
       const areaRect = playArea.getBoundingClientRect();
       const btnRect = noBtn.getBoundingClientRect();
@@ -113,7 +150,7 @@
       noBtn.style.top = `${y}px`;
     }
 
-    // Desktop: runs away when mouse gets close
+    // Desktop: runs away when mouse gets close (optional but fun)
     playArea.addEventListener("mousemove", (e) => {
       const btnRect = noBtn.getBoundingClientRect();
       const dx = e.clientX - (btnRect.left + btnRect.width / 2);
@@ -123,23 +160,62 @@
       if (distance < 90) moveNoButton();
     });
 
-      // Desktop: runs away when mouse hovers over it
+    // Desktop: runs away when mouse hovers over it
     noBtn.addEventListener("mouseover", moveNoButton);
 
-  // Mobile: runs away immediately when finger touches it
+    // Mobile: runs away immediately when finger touches it
     noBtn.addEventListener("touchstart", (e) => {
       e.preventDefault();
       moveNoButton();
     }, { passive: false });
 
-  // Extra safety: if click somehow registers
+    // Extra safety: if click somehow registers
     noBtn.addEventListener("click", (e) => {
       e.preventDefault();
       moveNoButton();
     });
+
+    function spawnHeart() {
+      const heart = document.createElement("div");
+      heart.className = "heart";
+
+      const options = ["💗", "💖", "💘", "💕", "❤️"];
+      heart.textContent = options[Math.floor(Math.random() * options.length)];
+
+      // Randomize start position and motion
+      const left = Math.random() * 100;
+      const duration = 2.5 + Math.random() * 2.5; // 2.5s–5s
+      const drift = (Math.random() * 160 - 80).toFixed(0) + "px"; // -80px to 80px
+      const scale = (0.8 + Math.random() * 1.2).toFixed(2); // 0.8–2.0
+
+      heart.style.left = `${left}vw`;
+      heart.style.animationDuration = `${duration}s`;
+      heart.style.setProperty("--drift", drift);
+      heart.style.setProperty("--scale", scale);
+
+      heartsLayer.appendChild(heart);
+
+      // Remove after animation ends
+      setTimeout(() => heart.remove(), duration * 1000);
+    }
+
+    function startHearts() {
+      // Burst
+      for (let i = 0; i < 18; i++) {
+        setTimeout(spawnHeart, i * 80);
+      }
+
+      // Continuous
+      const intervalId = setInterval(spawnHeart, 200);
+
+      // Stop after a bit (optional)
+      setTimeout(() => clearInterval(intervalId), 8500);
+    }
+
     yesBtn.addEventListener("click", () => {
       msg.style.display = "block";
       yesBtn.style.transform = "scale(1.05)";
+      startHearts();
     });
   </script>
 </body>
