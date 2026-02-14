@@ -123,15 +123,20 @@
       if (distance < 90) moveNoButton();
     });
 
-    // Mobile: runs away when finger touches area (more reliable than “hover”)
-    playArea.addEventListener("touchstart", () => moveNoButton(), { passive: true });
+      // Desktop: runs away when mouse hovers over it
+    noBtn.addEventListener("mouseover", moveNoButton);
 
-    // Also runs away if she tries to tap it
+  // Mobile: runs away immediately when finger touches it
+    noBtn.addEventListener("touchstart", (e) => {
+      e.preventDefault();
+      moveNoButton();
+    }, { passive: false });
+
+  // Extra safety: if click somehow registers
     noBtn.addEventListener("click", (e) => {
       e.preventDefault();
       moveNoButton();
     });
-
     yesBtn.addEventListener("click", () => {
       msg.style.display = "block";
       yesBtn.style.transform = "scale(1.05)";
